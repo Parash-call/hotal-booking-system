@@ -40,14 +40,7 @@ const App = () => {
               <BrowserRouter>
                 <Routes>
                   <Route element={<MainLayout />}>
-                    <Route
-                      path="/"
-                      element={
-                        <ProtectedRoute>
-                          <Home />
-                        </ProtectedRoute>
-                      }
-                    />
+                    <Route path="/" element={<Home />} />
                     <Route
                       path="/hotels"
                       element={
