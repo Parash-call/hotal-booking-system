@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/hotelBooking";
+  process.env.MONGO_URI ||
+  "mongodb+srv://pparas07783_db_user:Parash%4012345@cluster0.uxdhciw.mongodb.net/hotelBooking?appName=Cluster0";
 
 const connectDB = async (retries = 5) => {
   for (let attempt = 1; attempt <= retries; attempt++) {

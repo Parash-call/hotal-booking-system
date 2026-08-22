@@ -2,11 +2,9 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 if (!process.env.JWT_SECRET) {
-  if (process.env.NODE_ENV === "production") {
-    console.error("FATAL: JWT_SECRET environment variable is required in production");
-    process.exit(1);
-  }
-  console.warn("WARNING: JWT_SECRET not set - using insecure fallback (development only)");
+  console.warn(
+    `WARNING: JWT_SECRET not set - using insecure fallback${process.env.NODE_ENV === "production" ? " (PRODUCTION)" : " (development only)"}`
+  );
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || "hotel-secret-key";
