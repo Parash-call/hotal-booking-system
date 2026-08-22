@@ -50,9 +50,6 @@ const Login = () => {
         <p className="auth-note" style={{ textAlign: "center", marginTop: 14, color: "var(--muted)", fontSize: 14 }}>
           {t("noAccount")} <Link to="/register" style={{ color: "var(--gold-dark)", fontWeight: 700 }}>{t("register")}</Link>
         </p>
-        <div className="alert alert-info" style={{ marginTop: 16, fontSize: 13 }}>
-          Demo admin: admin@hotel.com / admin123
-        </div>
       </form>
     </div>
   );
