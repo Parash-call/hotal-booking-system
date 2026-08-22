@@ -4,24 +4,35 @@ const MONGO_URI =
   process.env.MONGO_URI ||
   "mongodb+srv://pparas07783_db_user:Parash%4012345@cluster0.uxdhciw.mongodb.net/hotelBooking?appName=Cluster0";
 
-const connectDB = async (retries = 5) => {
-  for (let attempt = 1; attempt <= retries; attempt++) {
+const OPTIONS = { serverSelectionTimeoutMS: 10000 };
+
+let retryTimer = null;
+
+const scheduleRetry = () => {
+  if (retryTimer || mongoose.connection.readyState === 1) return;
+  console.log("Retrying MongoDB connection in 10 seconds...");
+  retryTimer = setTimeout(async () => {
+    retryTimer = null;
     try {
-      await mongoose.connect(MONGO_URI);
-      console.log("MongoDB connected");
-      return;
+      await mongoose.connect(MONGO_URI, OPTIONS);
+      console.log("MongoDB connected (after retry)");
     } catch (err) {
-      console.error(
-        `MongoDB connection attempt ${attempt}/${retries} failed: ${err.message}`
-      );
-      if (attempt < retries) {
-        await new Promise((r) => setTimeout(r, 5000));
-      }
+      console.error("MongoDB connection failed:", err.message);
+      scheduleRetry();
     }
+  }, 10000);
+};
+
+mongoose.connection.on("disconnected", scheduleRetry);
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGO_URI, OPTIONS);
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB initial connection failed:", err.message);
+    scheduleRetry();
   }
-  console.error(
-    "MongoDB connection failed. Server running WITHOUT database. Check MONGO_URI in environment variables."
-  );
 };
 
 module.exports = connectDB;
