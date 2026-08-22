@@ -2,6 +2,9 @@
   "name": "hotel-booking-system",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20.19"
+  },
   "scripts": {
     "postinstall": "npm install --prefix backend && npm install --prefix frontend",
     "install:all": "npm run postinstall",

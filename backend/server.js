@@ -5,6 +5,7 @@ const cors = require("cors");
 const http = require("http");
 const path = require("path");
 const crypto = require("crypto");
+const mongoose = require("mongoose");
 
 const connectDB = require("./config/db");
 const { initSocket } = require("./config/socket");
@@ -37,6 +38,13 @@ app.use(
   )
 );
 app.use(express.json());
+
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    db: mongoose.connection.readyState === 1 ? "connected" : "not connected"
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 
