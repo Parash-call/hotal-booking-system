@@ -3,6 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { Search, Mic } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 
+const INDIAN_CITIES = [
+  "Mumbai", "Delhi", "New Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata",
+  "Pune", "Ahmedabad", "Jaipur", "Lucknow", "Kanpur", "Nagpur", "Indore",
+  "Bhopal", "Patna", "Vadodara", "Ludhiana", "Agra", "Nashik", "Varanasi",
+  "Amritsar", "Prayagraj", "Ranchi", "Gwalior", "Jabalpur", "Coimbatore",
+  "Vijayawada", "Jodhpur", "Madurai", "Raipur", "Chandigarh", "Guwahati",
+  "Udaipur", "Kochi", "Dehradun", "Shimla", "Panaji", "Goa", "Thiruvananthapuram",
+  "Mangaluru", "Mysuru", "Hubballi", "Belagavi", "Tiruchirappalli", "Salem",
+  "Warangal", "Guntur", "Noida", "Gurugram", "Faridabad", "Ghaziabad",
+  "Thiruvananthapuram", "Siliguri", "Jammu", "Srinagar", "Bhubaneswar",
+  "Cuttack", "Jamshedpur", "Durgapur", "Asansol", "Rourkela", "Kolhapur",
+  "Aurangabad", "Ajmer", "Kota", "Bikaner", "Ujjain", "Jhansi", "Meerut",
+  "Aligarh", "Gaya", "Bhavnagar", "Rajkot", "Jamnagar", "Surat",
+  "Manali", "Mussoorie", "Nainital", "Darjeeling", "Ooty", "Munnar",
+  "Rishikesh", "Haridwar", "Pushkar", "Jaisalmer", "Mount Abu",
+  "Mahabaleshwar", "Lonavala", "Puri", "Hampi", "Alappuzha", "Kanyakumari",
+  "Rameswaram", "Tirupati", "Shirdi", "Katra", "Port Blair", "Gangtok",
+  "Shillong", "Imphal", "Aizawl", "Kohima", "Itanagar", "Agartala"
+];
+
 const SearchBox = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -79,10 +99,16 @@ const SearchBox = () => {
         <input
           id="sq"
           type="text"
+          list="indian-cities"
           placeholder={t("searchPlaceholder")}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+        <datalist id="indian-cities">
+          {INDIAN_CITIES.map((city) => (
+            <option key={city} value={city} />
+          ))}
+        </datalist>
         <button type="button" className={`voice-btn ${listening ? "listening" : ""}`} onClick={handleVoice} title="Voice search">
           <Mic size={17} />
         </button>

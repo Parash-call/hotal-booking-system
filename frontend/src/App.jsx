@@ -40,11 +40,46 @@ const App = () => {
               <BrowserRouter>
                 <Routes>
                   <Route element={<MainLayout />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/hotels" element={<Hotels />} />
-                    <Route path="/hotels/:id" element={<HotelDetails />} />
-                    <Route path="/rooms" element={<Rooms />} />
-                    <Route path="/rooms/:id" element={<RoomDetails />} />
+                    <Route
+                      path="/"
+                      element={
+                        <ProtectedRoute>
+                          <Home />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/hotels"
+                      element={
+                        <ProtectedRoute>
+                          <Hotels />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/hotels/:id"
+                      element={
+                        <ProtectedRoute>
+                          <HotelDetails />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/rooms"
+                      element={
+                        <ProtectedRoute>
+                          <Rooms />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/rooms/:id"
+                      element={
+                        <ProtectedRoute>
+                          <RoomDetails />
+                        </ProtectedRoute>
+                      }
+                    />
                     <Route
                       path="/booking"
                       element={
