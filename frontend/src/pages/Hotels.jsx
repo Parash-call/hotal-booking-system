@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { MapPin, Mic, Map as MapIcon, List, X } from "lucide-react";
+import { MapPin, Mic, MicOff, Map as MapIcon, List, X, SlidersHorizontal } from "lucide-react";
 import HotelCard from "../components/HotelCard";
 import Loading from "../components/Loading";
 import MapView from "../components/MapView";
 import { useLanguage } from "../context/LanguageContext";
+import { useToast } from "../components/Toasts";
 import hotelService from "../services/hotelService";
 import dealService from "../services/dealService";
+import useVoiceInput from "../hooks/useVoiceInput";
 
 const MAX_PRICE = 10000;
 
 const Hotels = () => {
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [searchParams] = useSearchParams();
   const [hotels, setHotels] = useState([]);
   const [deals, setDeals] = useState([]);
@@ -21,7 +24,11 @@ const Hotels = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(MAX_PRICE);
   const [showMap, setShowMap] = useState(false);
-  const [listening, setListening] = useState(false);
+  const [sortBy, setSortBy] = useState("recommended");
+
+  useEffect(() => {
+    sessionStorage.setItem("visitedHotels", "1");
+  }, []);
 
   const checkin = searchParams.get("checkin") || "";
   const checkout = searchParams.get("checkout") || "";
@@ -45,7 +52,7 @@ const Hotels = () => {
   const cities = useMemo(() => [...new Set(hotels.map((h) => h.city))], [hotels]);
 
   const filtered = useMemo(() => {
-    return hotels.filter((h) => {
+    let result = hotels.filter((h) => {
       const matchQuery =
         !query ||
         h.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -55,25 +62,21 @@ const Hotels = () => {
       const matchPrice = h.price >= minPrice && h.price <= maxPrice;
       return matchQuery && matchCity && matchPrice;
     });
-  }, [hotels, query, city, minPrice, maxPrice]);
+
+    if (sortBy === "price-low") result.sort((a, b) => a.price - b.price);
+    else if (sortBy === "price-high") result.sort((a, b) => b.price - a.price);
+    else if (sortBy === "rating") result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+    return result;
+  }, [hotels, query, city, minPrice, maxPrice, sortBy]);
 
   const dealForHotel = (hotel) => deals.find((d) => d.roomTypes?.includes(hotel.rooms?.[0]?.type));
 
-  const handleVoice = () => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      alert("Voice search is not supported in this browser. Try Chrome or Edge.");
-      return;
-    }
-    const recognition = new SR();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.onstart = () => setListening(true);
-    recognition.onend = () => setListening(false);
-    recognition.onerror = () => setListening(false);
-    recognition.onresult = (e) => setQuery(e.results[0][0].transcript);
-    recognition.start();
-  };
+  const { listening, start } = useVoiceInput({
+    lang: "en-IN",
+    onResult: (transcript) => setQuery(transcript),
+    onError: (msg) => showToast(msg, "error"),
+  });
 
   const mapCenter = filtered[0]?.coordinates;
 
@@ -84,12 +87,25 @@ const Hotels = () => {
           <h1 className="section-title">
             {t("hotels")} <span>✦</span>
           </h1>
-          <p className="section-sub">{filtered.length} {t("noResults").length ? "properties available" : ""}</p>
+          <p className="section-sub">{filtered.length} properties available</p>
         </div>
-        <button className="btn btn-outline btn-sm" onClick={() => setShowMap((s) => !s)}>
-          {showMap ? <List size={16} /> : <MapIcon size={16} />}
-          {showMap ? "List view" : "Map view"}
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <select
+            className="form-select"
+            style={{ width: "auto", padding: "8px 12px", fontSize: 13 }}
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="recommended">Recommended</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="rating">Rating</option>
+          </select>
+          <button className="btn btn-outline btn-sm" onClick={() => setShowMap((s) => !s)}>
+            {showMap ? <List size={16} /> : <MapIcon size={16} />}
+            {showMap ? "List" : "Map"}
+          </button>
+        </div>
       </div>
 
       <div className="filter-bar">
@@ -104,10 +120,11 @@ const Hotels = () => {
           <button
             type="button"
             className={`voice-btn ${listening ? "listening" : ""}`}
-            style={{ top: "auto", transform: "none", bottom: 8, right: 8 }}
-            onClick={handleVoice}
+            style={{ top: "auto", transform: "none", bottom: 8, right: 8, background: listening ? "var(--danger)" : "var(--bg)" }}
+            onClick={start}
+            title={listening ? "Listening... tap to stop" : "Voice search"}
           >
-            <Mic size={16} />
+            {listening ? <MicOff size={16} style={{ color: "#fff" }} /> : <Mic size={16} />}
           </button>
         </div>
 
@@ -146,7 +163,7 @@ const Hotels = () => {
 
         {(query || city || minPrice > 0 || maxPrice < MAX_PRICE) && (
           <button
-            className="btn btn-sm"
+            className="btn btn-sm btn-outline"
             onClick={() => {
               setQuery("");
               setCity("");
@@ -160,7 +177,7 @@ const Hotels = () => {
       </div>
 
       {showMap && (
-        <div style={{ marginBottom: 26 }}>
+        <div style={{ marginBottom: 28 }}>
           <MapView lat={mapCenter?.lat} lng={mapCenter?.lng} name={filtered[0]?.name} />
         </div>
       )}
@@ -169,7 +186,7 @@ const Hotels = () => {
         <Loading />
       ) : filtered.length === 0 ? (
         <div className="empty-state">
-          <MapPin size={44} />
+          <MapPin size={48} />
           <h3>{t("noResults")}</h3>
           <p>{t("noHotels")}</p>
         </div>

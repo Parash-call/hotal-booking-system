@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarCheck, CreditCard, Star, ArrowRight } from "lucide-react";
+import { CalendarCheck, CreditCard, Star, ArrowRight, TrendingUp, BedDouble } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import Loading from "../../components/Loading";
@@ -32,6 +32,8 @@ const Dashboard = () => {
   if (loading) return <Loading />;
 
   const totalSpent = payments.reduce((sum, p) => sum + p.amount, 0);
+  const upcomingBookings = bookings.filter((b) => b.status === "confirmed");
+  const completedBookings = bookings.filter((b) => b.status === "checked-out");
 
   return (
     <div className="container" style={{ padding: "40px 20px" }}>
@@ -63,10 +65,17 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="stat-card">
-          <span className="stat-icon gold"><Star size={24} /></span>
+          <span className="stat-icon gold"><TrendingUp size={24} /></span>
           <div>
-            <div className="stat-value">{bookings.filter((b) => b.status === "confirmed").length}</div>
-            <div className="stat-label">Active stays</div>
+            <div className="stat-value">{upcomingBookings.length}</div>
+            <div className="stat-label">Upcoming trips</div>
+          </div>
+        </div>
+        <div className="stat-card">
+          <span className="stat-icon purple"><Star size={24} /></span>
+          <div>
+            <div className="stat-value">{completedBookings.length}</div>
+            <div className="stat-label">Completed stays</div>
           </div>
         </div>
       </div>
@@ -76,7 +85,11 @@ const Dashboard = () => {
           {t("recentBookings")} <span>✦</span>
         </h2>
         {bookings.length === 0 ? (
-          <p style={{ color: "var(--muted)" }}>No bookings yet.</p>
+          <div className="empty-state" style={{ padding: "40px 20px" }}>
+            <BedDouble size={48} />
+            <h3>No bookings yet</h3>
+            <p>Your upcoming stays will appear here.</p>
+          </div>
         ) : (
           <div className="table-wrap" style={{ boxShadow: "none", border: "1px solid var(--border)" }}>
             <table className="table">
@@ -98,7 +111,7 @@ const Dashboard = () => {
                     <td>{new Date(b.checkin).toLocaleDateString()} → {new Date(b.checkout).toLocaleDateString()}</td>
                     <td>{b.numberOfRooms}</td>
                     <td>₹{b.totalPrice}</td>
-                    <td><span className={`badge ${b.status === "confirmed" ? "badge-green" : "badge-gray"}`}>{b.status}</span></td>
+                    <td><span className={`badge ${b.status === "confirmed" ? "badge-green" : b.status === "checked-out" ? "badge-gray" : "badge-blue"}`}>{b.status}</span></td>
                   </tr>
                 ))}
               </tbody>

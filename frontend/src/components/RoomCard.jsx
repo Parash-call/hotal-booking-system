@@ -14,11 +14,11 @@ const RoomCard = ({ room, deal }) => {
       </div>
       <div className="card-body">
         <h3>{room.type}</h3>
-        <p style={{ color: "var(--muted)", fontSize: 14 }}>{room.description}</p>
+        <p style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.6 }}>{room.description}</p>
         {room.features?.length > 0 && (
-          <div style={{ margin: "10px 0" }}>
+          <div style={{ margin: "12px 0" }}>
             {room.features.map((f) => (
-              <div key={f} style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13.5, color: "var(--muted)" }}>
+              <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13.5, color: "var(--muted)", marginBottom: 4 }}>
                 <Check size={14} color="var(--success)" /> {f}
               </div>
             ))}

@@ -7,7 +7,6 @@ import { SocketProvider } from "./context/SocketContext";
 import MainLayout from "./layouts/MainLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Home from "./pages/Home";
 import Hotels from "./pages/Hotels";
 import Rooms from "./pages/Rooms";
 import HotelDetails from "./pages/HotelDetails";
@@ -18,6 +17,7 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import SocialCallback from "./pages/auth/SocialCallback";
 import Dashboard from "./pages/user/Dashboard";
 import MyBookings from "./pages/user/MyBookings";
 import Profile from "./pages/user/Profile";
@@ -25,10 +25,12 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageHotels from "./pages/admin/ManageHotels";
 import ManageRooms from "./pages/admin/ManageRooms";
 import ManageBookings from "./pages/admin/ManageBookings";
+import ManagePayments from "./pages/admin/ManagePayments";
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageReviews from "./pages/admin/ManageReviews";
 import ManageDeals from "./pages/admin/ManageDeals";
 import LiveChat from "./pages/admin/LiveChat";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
@@ -41,6 +43,7 @@ const App = () => {
                 <Routes>
                   <Route element={<MainLayout />}>
                     <Route path="/" element={<Home />} />
+
                     <Route
                       path="/hotels"
                       element={
@@ -93,6 +96,7 @@ const App = () => {
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/social-callback" element={<SocialCallback />} />
                     <Route
                       path="/dashboard"
                       element={
@@ -149,6 +153,14 @@ const App = () => {
                       element={
                         <ProtectedRoute adminOnly>
                           <ManageBookings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="payments"
+                      element={
+                        <ProtectedRoute adminOnly>
+                          <ManagePayments />
                         </ProtectedRoute>
                       }
                     />

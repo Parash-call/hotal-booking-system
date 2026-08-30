@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Building2, Bell, User, LogOut, LayoutDashboard, Globe, ChevronDown, Settings } from "lucide-react";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Building2, Bell, User, LogOut, LayoutDashboard, Globe, ChevronDown, Settings, Menu, X, Home, BedDouble, CreditCard, HelpCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
 import { useSocket } from "../context/SocketContext";
@@ -160,34 +160,119 @@ const UserMenu = () => {
   );
 };
 
+const MobileNav = ({ open, onClose }) => {
+  const { isAuthenticated, isAdmin } = useAuth();
+  const { t } = useLanguage();
+  const location = useLocation();
+  const visitedHotels = typeof sessionStorage !== "undefined" && sessionStorage.getItem("visitedHotels") === "1";
+
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
+  if (!open) return null;
+
+  return (
+    <div className="mobile-nav open" onClick={onClose}>
+      <div className="mobile-nav-panel" onClick={(e) => e.stopPropagation()}>
+        <button className="mobile-nav-close" onClick={onClose} aria-label="Close menu">
+          <X size={20} />
+        </button>
+
+        <Link to="/" className="mobile-nav-link" onClick={onClose}>
+          <Home size={18} /> {t("home")}
+        </Link>
+        {isAuthenticated && (
+          <Link to="/hotels" className="mobile-nav-link" onClick={onClose}>
+            <Building2 size={18} /> {t("hotels")}
+          </Link>
+        )}
+        {isAuthenticated && visitedHotels && (
+          <Link to="/rooms" className="mobile-nav-link" onClick={onClose}>
+            <BedDouble size={18} /> {t("rooms")}
+          </Link>
+        )}
+        {isAuthenticated && (
+          <Link to="/my-bookings" className="mobile-nav-link" onClick={onClose}>
+            <CreditCard size={18} /> {t("myBookings")}
+          </Link>
+        )}
+        {isAdmin && (
+          <Link to="/admin" className="mobile-nav-link" onClick={onClose}>
+            <LayoutDashboard size={18} /> {t("admin")}
+          </Link>
+        )}
+
+        <div className="mobile-nav-divider" />
+
+        {!isAuthenticated && (
+          <>
+            <Link to="/login" className="mobile-nav-link" onClick={onClose}>
+              <User size={18} /> {t("login")}
+            </Link>
+            <Link to="/register" className="mobile-nav-link" onClick={onClose}>
+              <HelpCircle size={18} /> {t("register")}
+            </Link>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const Navbar = () => {
   const { t } = useLanguage();
   const { isAuthenticated, isAdmin } = useAuth();
+  const location = useLocation();
+  const visitedHotels = typeof sessionStorage !== "undefined" && sessionStorage.getItem("visitedHotels") === "1";
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
 
   return (
-    <header className="navbar">
-      <div className="container navbar-inner">
-        <Link to="/" className="brand">
-          <span className="brand-icon">
-            <Building2 size={20} />
-          </span>
-          Grand Hotel
-        </Link>
+    <>
+      <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
+        <div className="container navbar-inner">
+          <Link to="/" className="brand">
+            <span className="brand-icon">
+              <Building2 size={20} />
+            </span>
+            Grand Hotel
+          </Link>
 
-        <nav className="nav-links">
-          <NavLink to="/" className="nav-link" end>{t("home")}</NavLink>
-          <NavLink to="/hotels" className="nav-link">{t("hotels")}</NavLink>
-          <NavLink to="/rooms" className="nav-link">{t("rooms")}</NavLink>
-          {isAdmin && <NavLink to="/admin" className="nav-link">{t("admin")}</NavLink>}
-        </nav>
+          <nav className="nav-links" key={location.pathname + String(isAuthenticated) + String(visitedHotels)}>
+            <NavLink to="/" className="nav-link" end>{t("home")}</NavLink>
+            {isAuthenticated && <NavLink to="/hotels" className="nav-link">{t("hotels")}</NavLink>}
+            {isAuthenticated && visitedHotels && <NavLink to="/rooms" className="nav-link">{t("rooms")}</NavLink>}
+            {isAdmin && <NavLink to="/admin" className="nav-link">{t("admin")}</NavLink>}
+          </nav>
 
-        <div className="nav-actions">
-          <LanguageSwitcher />
-          {isAuthenticated && <NotificationBell />}
-          <UserMenu />
+          <div className="nav-actions">
+            <LanguageSwitcher />
+            {isAuthenticated && <NotificationBell />}
+            <UserMenu />
+            <button className="mobile-menu-btn" onClick={() => setMobileOpen(true)} aria-label="Open menu">
+              <Menu size={20} />
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)} />
+    </>
   );
 };
 

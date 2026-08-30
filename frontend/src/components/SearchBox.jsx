@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Mic } from "lucide-react";
+import { Search, Mic, MicOff } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
+import useVoiceInput from "../hooks/useVoiceInput";
 
 const INDIAN_CITIES = [
   "Mumbai", "Delhi", "New Delhi", "Bengaluru", "Hyderabad", "Chennai", "Kolkata",
@@ -12,7 +13,7 @@ const INDIAN_CITIES = [
   "Udaipur", "Kochi", "Dehradun", "Shimla", "Panaji", "Goa", "Thiruvananthapuram",
   "Mangaluru", "Mysuru", "Hubballi", "Belagavi", "Tiruchirappalli", "Salem",
   "Warangal", "Guntur", "Noida", "Gurugram", "Faridabad", "Ghaziabad",
-  "Thiruvananthapuram", "Siliguri", "Jammu", "Srinagar", "Bhubaneswar",
+  "Siliguri", "Jammu", "Srinagar", "Bhubaneswar",
   "Cuttack", "Jamshedpur", "Durgapur", "Asansol", "Rourkela", "Kolhapur",
   "Aurangabad", "Ajmer", "Kota", "Bikaner", "Ujjain", "Jhansi", "Meerut",
   "Aligarh", "Gaya", "Bhavnagar", "Rajkot", "Jamnagar", "Surat",
@@ -30,8 +31,19 @@ const SearchBox = () => {
   const [checkin, setCheckin] = useState("");
   const [checkout, setCheckout] = useState("");
   const [guests, setGuests] = useState("");
-  const [listening, setListening] = useState(false);
   const [error, setError] = useState("");
+
+  const { listening, start } = useVoiceInput({
+    lang: "en-IN",
+    onResult: (transcript) => {
+      setQuery(transcript);
+      setTimeout(() => {
+        const params = new URLSearchParams({ query: transcript });
+        navigate(`/hotels?${params.toString()}`);
+      }, 300);
+    },
+    onError: (msg) => setError(msg),
+  });
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -66,32 +78,6 @@ const SearchBox = () => {
     navigate(`/hotels?${params.toString()}`);
   };
 
-  const handleVoice = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Voice search is not supported in this browser. Try Chrome or Edge.");
-      return;
-    }
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => setListening(true);
-    recognition.onend = () => setListening(false);
-    recognition.onerror = () => setListening(false);
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setQuery(transcript);
-      setTimeout(() => {
-        const params = new URLSearchParams({ query: transcript });
-        navigate(`/hotels?${params.toString()}`);
-      }, 300);
-    };
-
-    recognition.start();
-  };
-
   return (
     <form className="search-card" onSubmit={handleSearch}>
       <div className="search-field" style={{ position: "relative" }}>
@@ -109,8 +95,8 @@ const SearchBox = () => {
             <option key={city} value={city} />
           ))}
         </datalist>
-        <button type="button" className={`voice-btn ${listening ? "listening" : ""}`} onClick={handleVoice} title="Voice search">
-          <Mic size={17} />
+        <button type="button" className={`voice-btn ${listening ? "listening" : ""}`} onClick={start} title="Voice search">
+          {listening ? <MicOff size={17} /> : <Mic size={17} />}
         </button>
       </div>
       <div className="search-field">

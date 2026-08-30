@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, BedDouble } from "lucide-react";
 import Loading from "../components/Loading";
 import ErrorMessage from "../components/ErrorMessage";
 import { useLanguage } from "../context/LanguageContext";
@@ -50,11 +50,11 @@ const RoomDetails = () => {
         <div className="detail-hero-overlay">
           <div>
             <h1>{room.type}</h1>
-            <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 14 }}>
               <span className="price" style={{ color: "#fff" }}>
                 ₹{price} <small style={{ color: "rgba(255,255,255,.75)" }}>{t("perNight")}</small>
               </span>
-              {deal && <span className="badge badge-red">-{deal.discount}% {deal.code}</span>}
+              {deal && <span className="badge badge-accent">-{deal.discount}% {deal.code}</span>}
             </div>
           </div>
         </div>
@@ -65,12 +65,12 @@ const RoomDetails = () => {
           <h2>
             {t("description")} <span>✦</span>
           </h2>
-          <p style={{ color: "var(--muted)", fontSize: 15.5 }}>{room.description}</p>
+          <p style={{ color: "var(--muted)", fontSize: 15.5, lineHeight: 1.7 }}>{room.description}</p>
 
-          <h3 style={{ margin: "18px 0 10px", fontSize: 16, color: "var(--navy)" }}>Features</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <h3 style={{ margin: "20px 0 12px", fontSize: 17, color: "var(--navy)" }}>Features</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {room.features?.map((f) => (
-              <div key={f} style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)" }}>
+              <div key={f} style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--muted)", fontSize: 15 }}>
                 <Check size={16} color="var(--success)" /> {f}
               </div>
             ))}
@@ -78,8 +78,9 @@ const RoomDetails = () => {
         </div>
 
         <div className="panel" style={{ textAlign: "center" }}>
-          <div style={{ fontSize: 34, fontWeight: 800, color: "var(--navy)" }}>₹{price}</div>
-          <p style={{ color: "var(--muted)", marginBottom: 18 }}>{t("perNight")}</p>
+          <BedDouble size={32} style={{ color: "var(--gold)", marginBottom: 12 }} />
+          <div style={{ fontSize: 36, fontWeight: 800, color: "var(--navy)" }}>₹{price}</div>
+          <p style={{ color: "var(--muted)", marginBottom: 20 }}>{t("perNight")}</p>
           <Link to={`/booking?room=${encodeURIComponent(room.type)}&deal=${deal ? deal.code : ""}`} className="btn btn-gold btn-block">
             {t("bookNow")} <ArrowRight size={16} />
           </Link>

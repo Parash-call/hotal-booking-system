@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Users, CalendarCheck, IndianRupee, Star, Building2, BedDouble, ShieldAlert } from "lucide-react";
+import { Users, CalendarCheck, IndianRupee, Star, Building2, BedDouble, ShieldAlert, TrendingUp, CreditCard } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import Loading from "../../components/Loading";
@@ -37,10 +37,10 @@ const AdminDashboard = () => {
     <div>
       <div className="admin-topbar">
         <h1>{t("adminDashboard")}</h1>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <span className="badge badge-blue"><Building2 size={12} style={{ verticalAlign: -2 }} /> {counts.hotels} hotels</span>
           <span className="badge badge-blue"><BedDouble size={12} style={{ verticalAlign: -2 }} /> {counts.rooms} room types</span>
-          <span className="badge badge-red"><ShieldAlert size={12} style={{ verticalAlign: -2 }} /> {counts.payments} payments</span>
+          <span className="badge badge-green"><CreditCard size={12} style={{ verticalAlign: -2 }} /> {counts.payments} payments</span>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
           {monthly.length === 0 ? (
             <p style={{ color: "var(--muted)" }}>No revenue data yet.</p>
           ) : (
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 200, paddingTop: 10 }}>
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 220, paddingTop: 10 }}>
               {monthly.map((m) => (
                 <div key={m._id} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, height: "100%", justifyContent: "flex-end" }}>
                   <div
@@ -74,6 +74,7 @@ const AdminDashboard = () => {
                       borderRadius: "8px 8px 0 0",
                       height: `${Math.max(6, (m.total / maxRevenue) * 100)}%`,
                       minHeight: 8,
+                      transition: "height 0.5s ease",
                     }}
                     title={`₹${m.total}`}
                   />
@@ -95,9 +96,9 @@ const AdminDashboard = () => {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {recentBookings.map((b) => (
-                <div key={b._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "10px 12px", background: "#f8fafc", borderRadius: 10 }}>
+                <div key={b._id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "12px 14px", background: "var(--bg)", borderRadius: 12 }}>
                   <div>
-                    <strong style={{ fontSize: 13.5 }}>{b.name || b.user?.name || "Guest"}</strong>
+                    <strong style={{ fontSize: 14 }}>{b.name || b.user?.name || "Guest"}</strong>
                     <div style={{ fontSize: 12, color: "var(--muted)" }}>{b.room} · {new Date(b.checkin).toLocaleDateString()}</div>
                   </div>
                   <div style={{ textAlign: "right" }}>

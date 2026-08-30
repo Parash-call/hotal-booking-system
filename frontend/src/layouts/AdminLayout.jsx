@@ -4,11 +4,13 @@ import {
   Building2,
   BedDouble,
   CalendarCheck,
+  CreditCard,
   Users,
   Star,
   BadgePercent,
   Headphones,
   Home,
+  LogOut,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useLanguage } from "../context/LanguageContext";
@@ -22,6 +24,7 @@ const AdminLayout = () => {
     { to: "/admin/hotels", icon: <Building2 size={18} />, label: t("manageHotels") },
     { to: "/admin/rooms", icon: <BedDouble size={18} />, label: t("manageRooms") },
     { to: "/admin/bookings", icon: <CalendarCheck size={18} />, label: t("manageBookings") },
+    { to: "/admin/payments", icon: <CreditCard size={18} />, label: "Manage Payments" },
     { to: "/admin/users", icon: <Users size={18} />, label: t("manageUsers") },
     { to: "/admin/reviews", icon: <Star size={18} />, label: t("manageReviews") },
     { to: "/admin/deals", icon: <BadgePercent size={18} />, label: t("manageDeals") },
@@ -48,10 +51,10 @@ const AdminLayout = () => {
           </NavLink>
           <button
             className="admin-nav-link"
-            style={{ background: "none", border: "none", width: "100%", textAlign: "left", color: "rgba(255,255,255,.75)" }}
+            style={{ background: "none", border: "none", width: "100%", textAlign: "left", color: "rgba(255,255,255,.75)", cursor: "pointer" }}
             onClick={logout}
           >
-            <span>Logout ({user?.name?.split(" ")[0]})</span>
+            <LogOut size={18} /> Logout ({user?.name?.split(" ")[0]})
           </button>
         </div>
       </aside>

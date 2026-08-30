@@ -35,7 +35,7 @@ const ManageBookings = () => {
 
   const updateStatus = async (id, status) => {
     try {
-      const data = await bookingService.updateBooking(id, { status }, token);
+      await bookingService.updateBooking(id, { status }, token);
       showToast(`Booking ${status}`, "success");
       load();
     } catch (err) {

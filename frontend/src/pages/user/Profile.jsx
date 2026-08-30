@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserCircle } from "lucide-react";
+import { UserCircle, Mail, Lock } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../components/Toasts";
 import userService from "../../services/userService";
@@ -39,22 +39,31 @@ const Profile = () => {
       </div>
 
       <form className="form-card wide" onSubmit={handleSubmit}>
-        <div style={{ textAlign: "center", marginBottom: 18 }}>
-          <span className="avatar" style={{ width: 64, height: 64, fontSize: 24 }}>
-            <UserCircle size={40} />
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <span className="avatar" style={{ width: 72, height: 72, fontSize: 28 }}>
+            <UserCircle size={44} />
           </span>
         </div>
 
         <label className="form-label" htmlFor="p-name">Name</label>
-        <input id="p-name" className="form-input" type="text" required value={name} onChange={(e) => setName(e.target.value)} />
+        <div style={{ position: "relative" }}>
+          <input id="p-name" className="form-input" type="text" required value={name} onChange={(e) => setName(e.target.value)} style={{ paddingLeft: 40 }} />
+          <UserCircle size={16} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--muted)" }} />
+        </div>
 
         <label className="form-label" htmlFor="p-email">Email</label>
-        <input id="p-email" className="form-input" type="email" disabled value={user?.email} />
+        <div style={{ position: "relative" }}>
+          <input id="p-email" className="form-input" type="email" disabled value={user?.email} style={{ paddingLeft: 40 }} />
+          <Mail size={16} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--muted)" }} />
+        </div>
 
         <label className="form-label" htmlFor="p-pass">New Password (optional)</label>
-        <input id="p-pass" className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Leave blank to keep current" />
+        <div style={{ position: "relative" }}>
+          <input id="p-pass" className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Leave blank to keep current" style={{ paddingLeft: 40 }} />
+          <Lock size={16} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--muted)" }} />
+        </div>
 
-        <button className="btn btn-gold btn-block" type="submit" disabled={submitting} style={{ marginTop: 18 }}>
+        <button className="btn btn-gold btn-block" type="submit" disabled={submitting} style={{ marginTop: 20 }}>
           {submitting ? "Saving..." : "Save changes"}
         </button>
       </form>

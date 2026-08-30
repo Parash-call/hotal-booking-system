@@ -13,7 +13,7 @@ const HotelCard = ({ hotel, deal }) => {
         <img src={hotel.image || "/images/hotel.jpg"} alt={hotel.name} loading="lazy" />
         {deal && <span className="card-badge deal">-{deal.discount}%</span>}
         {hotel.rating > 0 && (
-          <span className="card-badge" style={{ right: 12, left: "auto" }}>
+          <span className="card-badge" style={{ right: 14, left: "auto", background: "var(--gold)", color: "#fff" }}>
             <Star size={12} fill="currentColor" /> {hotel.rating}
           </span>
         )}

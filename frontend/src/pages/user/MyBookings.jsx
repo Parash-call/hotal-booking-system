@@ -4,8 +4,7 @@ import { useLanguage } from "../../context/LanguageContext";
 import { useToast } from "../../components/Toasts";
 import Loading from "../../components/Loading";
 import bookingService from "../../services/bookingService";
-import paymentService from "../../services/paymentService";
-import { CalendarX } from "lucide-react";
+import { CalendarX, BedDouble } from "lucide-react";
 
 const statusBadge = (status) => {
   const map = {
@@ -58,9 +57,9 @@ const MyBookings = () => {
 
       {bookings.length === 0 ? (
         <div className="empty-state">
-          <CalendarX size={44} />
+          <BedDouble size={48} />
           <h3>No bookings yet</h3>
-          <p>Head over to the booking page to plan your stay.</p>
+          <p>Your upcoming stays will appear here.</p>
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
